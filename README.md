@@ -5,4 +5,4 @@ The following is the impact of rounding errors on the 2009-2020 bull market run 
 
 ## Results: 
 
-![alt text](rawVals.png)
+![alt text](https://github.com/Aryanpatel335/stock_market_roundoff_errors_analysis/blob/main/rawVals.png)
