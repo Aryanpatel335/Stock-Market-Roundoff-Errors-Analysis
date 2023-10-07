@@ -1,9 +1,7 @@
 import yfinance as yf
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
-import datetime
 
 ticker_sym = "^GSPC" # want to fetch the S and P 500 Index
 
@@ -17,10 +15,13 @@ stock_data = yf.download(ticker_sym, start=start_date, end=end_date)
 # converting data into pandas dataframe
 df = pd.DataFrame(stock_data)
 
-change_adjClose = list(df['Adj Close'].pct_change()*100)
-# print(df['Adj Close'].pct_change()*100)
-change_adjClose.pop(0)
-truncated_percent_change = []
+pctChange_adjClose = list(df['Adj Close'].pct_change()*100)
+pctChange_adjClose.pop(0) # pop initial value NaN percent change
+
+# this array will hold truncated values chopped to 2 decimal places. It will not be rounded
+# example 0.1256 --> 0.12 
+truncated_pctChange = []
+
 def truncate(number, decimal_places):
     if number < 0:
         number = number * -1
@@ -33,42 +34,35 @@ def truncate(number, decimal_places):
         return truncated_number
 
 
-for i in change_adjClose:
-    truncated_percent_change.append(truncate(i,2))
+for i in pctChange_adjClose:
+    truncated_pctChange.append(truncate(i,2))
 
-df['y'] = df['Adj Close']
-# print(change_adjClose)    
+truncated_adjClose = []
 
-#truncate to 2 decimal places
+# this is the first value in the dataframe
+truncated_adjClose.append(truncate(df['Adj Close'].iloc[0],2))
 
-to_plot = []
-to_plot.append(truncate(df['y'].iloc[0],2))
-j=0
-for i in truncated_percent_change:
+for i,j in enumerate(truncated_pctChange):
+    # calculate next days value from previous day based on percent change
+    chopped_val = truncated_adjClose[i] * (1 + (j/100))
+    # truncate to 2 decimal places
+    truncated_adjClose.append(truncate(chopped_val,2))
 
-    chopped_val = to_plot[j] * (1 + (i/100))
-    j+=1
-    to_plot.append(truncate(chopped_val,2))
-# print(to_plot)
-# print(change_adjClose)
 #sizing the plot
 plt.figure(figsize=(18,9))
 
+df['Truncated Adj Close'] =  truncated_adjClose
 
- 
-to_list_plot = np.array(to_plot)
-df['Truncated Vals'] =  to_list_plot.tolist()
+# print(df['Truncated Vals'], df['Adj Close'])
 
-
-plt.plot(df.index, df['Adj Close'], label='S and P 500 Closing Price 2008-2020 Bull Market')
-plt.plot(df.index, df['Truncated Vals'], label='Truncated S and P 500 Adjusted Closing Price 2008-2020 Bull Market')
-
+plt.plot(df.index, df['Adj Close'], label='Adjusted Close for S and P 500 2008-2020 Bull Market')
+plt.plot(df.index, df['Truncated Adj Close'], label='Truncated Adjusted Close for S and P 500 2008-2020 Bull Market')
 
 # basic labelling of the graph
 plt.title('S and P 500 Adjusted Closing Price vs Truncated Adjusted Closing Price')
 
 plt.xlabel('Date')
-plt.ylabel('Adj Closing Price')
+plt.ylabel('Adj Closing Prices')
 plt.legend()
 plt.grid(True)
 plt.show()
