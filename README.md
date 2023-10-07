@@ -1,6 +1,6 @@
 # Stock Market Roundoff Errors Analysis
 
-### Technologies and Libraries Used: # Python, yFinance, pandas, matplotlib
+### Technologies and Libraries Used: Python, yFinance, pandas, matplotlib
 
 ### Report PDF : [Stock Market Round Off Error Analysis.pdf](https://github.com/Aryanpatel335/stock_market_roundoff_errors_analysis/blob/main/Stock%20Market%20Round%20Off%20Error%20Analysis.pdf)
 
