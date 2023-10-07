@@ -66,4 +66,3 @@ plt.ylabel('Adj Closing Prices')
 plt.legend()
 plt.grid(True)
 plt.show()
-
